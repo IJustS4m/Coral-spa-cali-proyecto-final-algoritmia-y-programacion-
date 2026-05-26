@@ -48,7 +48,6 @@ La solución consiste en la implementación de una plataforma web que permita a 
 - HTML5
 - CSS3
 - Python
-- Git
 - GitHub
   
 **Metodología de Desarrollo**
