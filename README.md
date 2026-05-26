@@ -50,7 +50,7 @@ La solución consiste en la implementación de una plataforma web que permita a 
 - Python
 - Git
 - GitHub
-- 
+  
 **Metodología de Desarrollo**
   
 Para la construcción del proyecto se siguieron las siguientes etapas:
