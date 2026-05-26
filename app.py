@@ -15,7 +15,7 @@ from database import (
     obtener_servicios,
 )
 
-# ── Configuración de página ──────────────────────────────────────────────────
+#  configuracion de página principal
 st.set_page_config(
     page_title="CORAL SPA CALI",
     page_icon="spa.ico",
@@ -23,7 +23,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ── Estilos CSS ──────────────────────────────────────────────────────────────
+# parte estetica en CSS
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap');
@@ -207,7 +207,7 @@ HORARIOS = ["9:00 AM","9:30 AM","10:00 AM","10:30 AM","11:00 AM","11:30 AM",
             "12:00 PM","12:30 PM","1:00 PM","1:30 PM","2:00 PM","2:30 PM",
             "3:00 PM","3:30 PM","4:00 PM","4:30 PM","5:00 PM","5:30 PM"]
 
-# ── Helpers de datos ─────────────────────────────────────────────────────────
+# dias disponibles
 def fecha_es(d):
     return f"{DIAS_SEMANA[d.weekday()]}, {d.day} de {MESES[d.month]} de {d.year}"
 
@@ -222,7 +222,7 @@ def fechas_disponibles():
 def horarios_disponibles(estilista_id, fecha_str):
     ocupados = horarios_ocupados(estilista_id, fecha_str)
     return [h for h in HORARIOS if h not in ocupados]
-# ── Session state ────────────────────────────────────────────────────────────
+# conexion con los servicios y estilistas que se encuentran en la base de datos 
 init_db()
 SERVICIOS = obtener_servicios()
 ESTILISTAS = obtener_estilistas()
@@ -233,7 +233,7 @@ if "reserva" not in st.session_state: st.session_state.reserva = {}
 
 def ir(pagina): st.session_state.pagina = pagina
 
-# ── Banner ───────────────────────────────────────────────────────────────────
+# "Banner"
 st.markdown("""
 <div class="gs-banner">
     <h1>CORAL SPA CALI</h1>
@@ -251,7 +251,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Navegación superior (sesión activa) ──────────────────────────────────────
+# navegacion superior con la sesion ya iniciada
 if st.session_state.usuario:
     u = st.session_state.usuario
     cols = st.columns([4, 1.5, 1.5, 1.5, 1.5, 1.5])
@@ -266,9 +266,7 @@ if st.session_state.usuario:
         st.rerun()
     st.markdown('<hr class="gs-divider">', unsafe_allow_html=True)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# PÁGINA: INICIO
-# ═══════════════════════════════════════════════════════════════════════════════
+# inicio
 if st.session_state.pagina == "inicio" and not st.session_state.usuario:
     tab_login, tab_reg = st.tabs(["Iniciar sesión", "Crear cuenta"])
 
@@ -316,13 +314,12 @@ if st.session_state.pagina == "inicio" and not st.session_state.usuario:
                 fecha_registro = f"{hoy.day} de {MESES[hoy.month]} de {hoy.year}"
                 registrar_usuario(r_user, r_pw, r_nom, r_tel, fecha_registro)
                 st.success(f"Cuenta creada exitosamente. Bienvenido/a, {r_nom}. Ya puede iniciar sesión.")
-# ═══════════════════════════════════════════════════════════════════════════════
-# PÁGINA: RESERVAR
-# ═══════════════════════════════════════════════════════════════════════════════
+
+# apartado de "reservar"
 elif st.session_state.pagina == "reservar" and st.session_state.usuario:
     st.markdown('<div class="gs-section">Reservar una cita</div>', unsafe_allow_html=True)
 
-    # Servicio
+    # servicios
     st.markdown("**Servicio**")
     opciones_serv = [f"{s['nombre']}  —  ${int(s['precio']):,}  (~{s['duracion']})".replace(",", ".") for s in SERVICIOS]
     sel_serv = st.selectbox("Seleccione un servicio", opciones_serv, key="sel_serv", label_visibility="collapsed", index=None, placeholder="Elegir una opcion")
@@ -330,7 +327,7 @@ elif st.session_state.pagina == "reservar" and st.session_state.usuario:
 
     st.markdown('<hr class="gs-divider">', unsafe_allow_html=True)
 
-    # Estilista
+    # estilistas
     st.markdown("**Estilista**")
     opciones_est = [f"{e['nombre']}  ·  {e['calificacion']}/5  ·  {', '.join(e['especialidades'])}" for e in ESTILISTAS]
     sel_est = st.selectbox("Seleccione un estilista", opciones_est, key="sel_est", label_visibility="collapsed", index=None, placeholder="Elegir una opcion")
@@ -338,7 +335,7 @@ elif st.session_state.pagina == "reservar" and st.session_state.usuario:
 
     st.markdown('<hr class="gs-divider">', unsafe_allow_html=True)
 
-    # Fecha
+    # fechas
     st.markdown("**Fecha**")
     fechas = fechas_disponibles()
     fecha_sel = st.selectbox("Seleccione una fecha", fechas, key="sel_fecha", label_visibility="collapsed", index=None, placeholder="Elegir una opcion")
@@ -349,7 +346,7 @@ elif st.session_state.pagina == "reservar" and st.session_state.usuario:
 
     st.markdown('<hr class="gs-divider">', unsafe_allow_html=True)
 
-    # Hora
+    # hora
     st.markdown("**Hora**")
     horarios = horarios_disponibles(estilista_sel["id"], fecha_sel)
     if not horarios:
@@ -359,7 +356,7 @@ elif st.session_state.pagina == "reservar" and st.session_state.usuario:
 
         st.markdown('<hr class="gs-divider">', unsafe_allow_html=True)
 
-        # Resumen
+        # recibo
         st.markdown("**Resumen de la reserva**")
         col1, col2 = st.columns(2)
         col1.markdown(f"**Servicio:** {servicio_sel['nombre']}")
@@ -382,7 +379,7 @@ elif st.session_state.pagina == "reservar" and st.session_state.usuario:
                 hora             = hora_sel,
             )
             st.success(f"Cita reservada. ID de confirmación: **{cita_id}**") 
-# MIS CITAS
+# apartado de citas
 elif st.session_state.pagina == "mis_citas" and st.session_state.usuario:
     st.markdown('<div class="gs-section">Mis citas</div>', unsafe_allow_html=True)
     citas = obtener_citas_usuario(st.session_state.usuario["usuario"])
@@ -408,9 +405,7 @@ elif st.session_state.pagina == "mis_citas" and st.session_state.usuario:
                     cancelar_cita(c["id"], st.session_state.usuario["usuario"])
                     st.success("Cita cancelada.")
                     st.rerun()
-# ═══════════════════════════════════════════════════════════════════════════════
-# PÁGINA: ESTILISTAS
- 
+# apartado de estilistas
 elif st.session_state.pagina == "estilistas" and st.session_state.usuario:
     st.markdown('<div class="gs-section">Nuestros estilistas</div>', unsafe_allow_html=True)
     for est in ESTILISTAS:
@@ -422,9 +417,8 @@ elif st.session_state.pagina == "estilistas" and st.session_state.usuario:
         </div>
         """, unsafe_allow_html=True)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# PÁGINA: CANCELAR CITA
-# ═══════════════════════════════════════════════════════════════════════════════
+
+# boton de cancelar citas para cada una de ellas
 elif st.session_state.pagina == "cancelar" and st.session_state.usuario:
     st.markdown('<div class="gs-section">Cancelar una cita</div>', unsafe_allow_html=True)
     citas = cargar_citas()
@@ -445,9 +439,8 @@ elif st.session_state.pagina == "cancelar" and st.session_state.usuario:
             st.success("Cita cancelada exitosamente.")
             st.rerun()
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# PÁGINA: PERFIL
-# ═══════════════════════════════════════════════════════════════════════════════
+
+# apartado de perfil
 elif st.session_state.pagina == "perfil" and st.session_state.usuario:
     u = st.session_state.usuario
     st.markdown('<div class="gs-section">Mi perfil</div>', unsafe_allow_html=True)
@@ -460,9 +453,7 @@ elif st.session_state.pagina == "perfil" and st.session_state.usuario:
     </div>
     """, unsafe_allow_html=True)
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# REDIRIGIR si está logueado y en "inicio"
-# ═══════════════════════════════════════════════════════════════════════════════
+# redirige al incio si está logueado 
 elif st.session_state.pagina == "inicio" and st.session_state.usuario:
     ir("reservar")
     st.rerun()
